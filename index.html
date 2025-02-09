@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de Namoro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffbdbd;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: auto;
+        }
+
+        #names {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3em;
+            color: #e34b75;
+            margin-bottom: 20px;
+        }
+
+        #timer {
+            font-size: 2em;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        #foto-namorada {
+            width: 200px;
+            height: auto;
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        .coracao {
+            position: absolute;
+            color: #ff1a56;
+            font-size: 2em;
+            animation: subir 3s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        .emoji-coracao {
+            position: absolute;
+            font-size: 2em;
+            animation: flutuar 5s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .emoji-fixo {
+            position: absolute;
+            font-size: 3em;
+            opacity: 0.7;
+            z-index: 1;
+        }
+
+        @keyframes subir {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-150px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes flutuar {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+
+        #playButton {
+            padding: 15px;
+            background-color: #e34b75;
+            color: white;
+            font-size: 2em;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #playButton:hover {
+            background-color: #d43f66;
+        }
+
+        /* Estilo para corações animados na parte inferior */
+        .coracao-inferior {
+            position: absolute;
+            color: #ff1a56;
+            font-size: 3em;
+            animation: subirInferior 3s ease-in-out infinite;
+            z-index: 1;
+            bottom: 10px;
+        }
+
+        @keyframes subirInferior {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Título do site -->
+    <div id="names">
+        Gris <span>❤️</span> Leo
+    </div>
+    
+    <!-- Contador de tempo -->
+    <div id="timer"></div>
+    
+    <!-- Foto da namorada -->
+    <img id="foto-namorada" src="share2614969004120356557.jpg" alt="Foto da Namorada">
+
+    <!-- Botão para tocar música -->
+    <button id="playButton">❤️</button>
+    
+    <!-- Música -->
+    <audio id="musica">
+        <source src="Mobi Colombo - Eu Juro (Leandro & Leonardo cover).mp3" type="audio/mpeg">
+        Seu navegador não suporta a tag de áudio.
+    </audio>
+
+    <script>
+        const inicioNamoro = new Date('2024-06-15T23:45:00');
+
+        function atualizarTempo() {
+            const agora = new Date();
+            const diferenca = agora - inicioNamoro;
+
+            const anos = Math.floor(diferenca / (1000 * 60 * 60 * 24 * 365));
+            const meses = Math.floor((diferenca % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+            const dias = Math.floor((diferenca % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((diferenca % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
+            const segundos = Math.floor((diferenca % (1000 * 60)) / 1000);
+
+            document.getElementById('timer').innerHTML = 
+                `${anos} anos, ${meses} meses, ${dias} dias, ${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+        }
+
+        // Função para gerar corações em movimento
+        function gerarCoracao() {
+            const coracao = document.createElement('div');
+            coracao.classList.add('coracao');
+            coracao.innerHTML = '❤️';
+
+            const tamanho = Math.random() * 2 + 1;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 80 + 10; // Ajustando para aparecer mais homogêneo
+
+            coracao.style.fontSize = `${tamanho}em`;
+            coracao.style.left = `${posX}%`;
+            coracao.style.top = `${posY}%`;
+
+            document.body.appendChild(coracao);
+        }
+
+        // Função para gerar emojis fixos de forma mais distribuída
+        function gerarEmojisFixos() {
+            const emojisFixos = ['💖', '🌹', '💘', '💞', '❣️', '💓', '💕'];
+            const emojiFixo = document.createElement('div');
+            emojiFixo.classList.add('emoji-fixo');
+            emojiFixo.innerHTML = emojisFixos[Math.floor(Math.random() * emojisFixos.length)];
+
+            // Distribuindo os emojis de forma homogênea pela tela
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 80 + 10; // Ajustando para ficar espalhado por toda a tela
+
+            emojiFixo.style.left = `${posX}%`;
+            emojiFixo.style.top = `${posY}%`;
+
+            document.body.appendChild(emojiFixo);
+        }
+
+        // Função para gerar corações na parte inferior da página
+        function gerarCoracaoInferior() {
+            const coracaoInferior = document.createElement('div');
+            coracaoInferior.classList.add('coracao-inferior');
+            coracaoInferior.innerHTML = '❤️';
+
+            const posX = Math.random() * 100;
+            coracaoInferior.style.left = `${posX}%`;
+
+            document.body.appendChild(coracaoInferior);
+        }
+
+        // Função para tocar música quando o botão for pressionado
+        document.getElementById('playButton').addEventListener('click', function() {
+            const musica = document.getElementById('musica');
+            musica.play();
+            document.getElementById('playButton').style.display = 'none'; // Esconde o botão após tocar
+        });
+
+        // Gerar corações em movimento
+        setInterval(gerarCoracao, 1000);
+
+        // Gerar corações na parte inferior
+        setInterval(gerarCoracaoInferior, 2000);
+
+        // Gerar emojis fixos distribuídos de forma homogênea
+        for (let i = 0; i < 40; i++) {
+            gerarEmojisFixos();
+        }
+
+        atualizarTempo();
+        setInterval(atualizarTempo, 1000);
+    </script>
+</body>
+</html>
